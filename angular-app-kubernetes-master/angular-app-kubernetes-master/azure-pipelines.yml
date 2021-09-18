@@ -1,0 +1,57 @@
+# Variable 'Slack.Token' was defined in the Variables tab
+trigger:
+  tags:
+    include:
+    - v*
+pr: none
+  
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: master
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    name: Demo-agent
+  steps:
+  - checkout: self
+  - task: SonarCloudPrepare@1
+    displayName: Prepare analysis on SonarCloud
+    inputs:
+      SonarCloud: d099a487-dd75-4f17-982e-c151d1359812
+      organization: naoufelmhadhbi
+      scannerMode: CLI
+      configMode: manual
+      cliProjectKey: NaoufelMHADHBI_angular-app-kubernetes
+      projectKey: NaoufelMHADHBI_angular-app-kubernetes
+      cliProjectName: angular-app-kubernetes
+      projectName: angular-app-kubernetes
+  - task: Docker@0
+    displayName: 'Build an image'
+    inputs:
+      containerregistrytype: 'Container Registry'
+      dockerRegistryConnection: DockerHubConnection
+      dockerFile: Dockerfile
+      imageName: 'naoufeldocker/angular-app:$(Build.BuildId)'
+  - task: SonarCloudAnalyze@1
+    displayName: Run Code Analysis
+  - task: SonarCloudPublish@1
+    displayName: Publish Quality Gate Result
+  - task: Docker@0
+    displayName: Push an image
+    inputs:
+      containerregistrytype: 'Container Registry'
+      dockerRegistryConnection: DockerHubConnection
+      action: 'Push an image'
+      imageName: 'naoufeldocker/angular-app:$(Build.BuildId)'
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      Contents: 'deployment.azure-with-version.yaml'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+...

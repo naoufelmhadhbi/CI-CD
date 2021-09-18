@@ -1,0 +1,29 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2 
+kind: Deployment 
+metadata: 
+  name: angular-deployment-v#{Build.BuildId}#
+  labels: 
+    app: angular 
+spec: 
+  selector: 
+    matchLabels: 
+      app: angular
+      version: v#{Build.BuildId}# 
+  replicas: 3 # tells deployment to run 2 pods matching the template 
+  template:
+    metadata: 
+      labels: 
+        app: angular
+        version: v#{Build.BuildId}# 
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec: 
+      containers: 
+      - name: angular 
+        image: naoufeldocker/angular-app:#{Build.BuildId}#
+        ports: 
+        - containerPort: 80
+        env:
+        - name: VERSION
+          value: v2
