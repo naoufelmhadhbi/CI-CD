@@ -1,0 +1,2 @@
+- Ce projet a été réalisé en binômes dont l'objectif est l'implémentation d'un CI-CD pour la mise en place d'un cluster AKS (Azure Kubernetes Service) en utilisant Azure DevOps Pipelines et les commandes Terraform nécessaires, ainsi d'implémenter un CI-CD d’une application web (angular) conteneurisée en utilisant Dockerfile, GitHub, Azure DevOps et DockerHub qui sera surveillée par Prometheus et visualisée par Grafana.
+- Système d’exploitation: Windows 10.
